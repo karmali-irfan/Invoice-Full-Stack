@@ -1,11 +1,11 @@
 "use strict";
 
+// checking...
 const Invoice = () => {
   const [data, setData] = React.useState(null);
   const [description, setDescription] = React.useState("");
   const [price, setPrice] = React.useState("");
   const [addItem, setAddItem] = React.useState(false);
-  // const addItem = true;
 
   const handleRemoveItem = (id) => {
     setData({
