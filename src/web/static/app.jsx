@@ -5,6 +5,8 @@ const Invoice = () => {
   const [description, setDescription] = React.useState("");
   const [price, setPrice] = React.useState("");
   const [addItem, setAddItem] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
   const handleRemoveItem = (id) => {
     setData({
@@ -40,11 +42,20 @@ const Invoice = () => {
           id: uuid.v4(), // Add a new id property with the index as its value
         }));
         setData(response.data);
+        setLoading(false);
       })
       .catch((error) => {
-        console.log("Data fetch failed", error);
+        console.log(error);
+        setError(error);
       });
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div> {error.response.data} </div>;
+  }
 
   if (!data) {
     return <div>Loading...</div>;

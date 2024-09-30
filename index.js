@@ -20,7 +20,15 @@ app.get("/api/invoice", async (req, res) => {
     res.json(response.data); // Send the fetched data to the client
   } catch (error) {
     console.error("Error fetching invoice data:", error);
-    res.status(500).send("Error fetching invoice data");
+    if (error.response) {
+      res
+        .status(error.response.status)
+        .send("Error ", error.response.statusTetxt);
+    } else if (error.request) {
+      res.status(500).send("No response from the server :(( Try again later!");
+    } else {
+      res.status(500).send("Error fetching invoice data");
+    }
   }
 });
 
