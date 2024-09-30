@@ -1,6 +1,5 @@
 "use strict";
 
-// checking...
 const Invoice = () => {
   const [data, setData] = React.useState(null);
   const [description, setDescription] = React.useState("");
