@@ -57,10 +57,6 @@ const Invoice = () => {
     return <div> {error.response.data} </div>;
   }
 
-  if (!data) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <React.Fragment>
       <table cellPadding="0" cellSpacing="0">
