@@ -1,0 +1,34 @@
+# Default
+*.dat
+*.iml
+*.log
+*.out
+*.pid
+*.seed
+*.sublime-*
+*.swo
+*.swp
+*.tgz
+*.xml
+*.txt
+*.orig
+.DS_Store
+.idea
+.project
+.strong-pm
+.projectile
+env
+coverage
+.nyc_output
+node_modules/
+npm-debug.log
+dist
+tmp
+
+# Visual Studio Code
+typings/
+typings.json
+.vscode/*
+
+# Local config
+config/profiles/local.js

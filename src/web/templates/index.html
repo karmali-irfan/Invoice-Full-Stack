@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Invoicer</title>
+
+    <!-- External Stylesheet -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/static/stylesheets/master.css"
+    />
+
+    <!-- Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <!-- React and ReactDOM libraries -->
+    <script
+      src="https://unpkg.com/react@17/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+
+    <!-- Babel for JSX support -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <!-- Material UI UMD build -->
+    <script src="https://unpkg.com/@mui/material/umd/material-ui.development.js"></script>
+
+    <!-- Axios for API requests -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- UUID -->
+    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuid.min.js"></script>
+
+</head>
+  </head>
+  <body>
+    <!-- Placeholder for React rendering -->
+    <div id="invoice" class="invoice-box"></div>
+
+    <!-- Link to the JSX file -->
+    <script type="text/babel" src="/static/app.jsx"></script>
+  </body>
+</html>
