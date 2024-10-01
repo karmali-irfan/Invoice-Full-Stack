@@ -8,11 +8,27 @@ const Invoice = () => {
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
+  const postUpdatedInvoice = async (updatedData) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3003/api/invoice/update",
+        { data: updatedData },
+        { withCredentials: true }
+      );
+      console.log("Invoice updated:", response.data);
+    } catch (error) {
+      console.error("Error updating invoice:", error);
+      setError(error);
+    }
+  };
+
   const handleRemoveItem = (id) => {
-    setData({
+    const updatedData = {
       ...data,
       lineItems: data.lineItems.filter((item) => item.id !== id),
-    });
+    };
+    setData(updatedData);
+    postUpdatedInvoice(updatedData);
   };
 
   React.useEffect(() => {
@@ -28,9 +44,14 @@ const Invoice = () => {
       price: Number(price),
       id: uuid.v4(),
     };
+    const updatedData = {
+      ...data,
+      lineItems: [...data.lineItems, newItem],
+    };
     setDescription("");
     setPrice("");
-    setData({ ...data, lineItems: [...data.lineItems, newItem] });
+    setData(updatedData);
+    postUpdatedInvoice(updatedData);
   };
 
   React.useEffect(() => {
@@ -38,8 +59,8 @@ const Invoice = () => {
       .get("http://localhost:3003/api/invoice", { withCredentials: true })
       .then((response) => {
         response.data.lineItems = response.data.lineItems.map((item) => ({
-          ...item, // Spread the existing properties of the item
-          id: uuid.v4(), // Add a new id property with the index as its value
+          ...item,
+          id: uuid.v4(),
         }));
         setData(response.data);
         setLoading(false);
@@ -127,8 +148,7 @@ const Invoice = () => {
                 </button>
                 {item.description}
               </td>
-              {/* <td>${item.price.toFixed(2)}</td> */}
-              <td>${item.price}</td>
+              <td>${item.price.toFixed(2)}</td>
             </tr>
           ))}
 
