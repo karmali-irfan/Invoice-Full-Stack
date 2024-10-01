@@ -45,12 +45,13 @@ app.post("/api/invoice/update", (req, res) => {
       return res.status(400).send("No invoice data found to update");
     }
     const { lineItems } = req.body.data;
-    if (Array.isArray(lineItems)) {
-      invoiceData.lineItems = lineItems;
-      res.status(200).json(invoiceData);
-    } else {
-      res.status(400).send("Invalid lineItems format");
+    for (const item of lineItems) {
+      if (!item.description || !item.price || typeof item.price !== "number") {
+        res.status(400).send("Invalid lineItems format");
+      }
     }
+    invoiceData.lineItems = lineItems;
+    res.status(200).json(invoiceData);
   } catch (error) {
     console.error("Error updating invoice:", error);
     res.status(500).send("Error updating invoice");

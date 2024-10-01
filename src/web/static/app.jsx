@@ -1,5 +1,112 @@
 "use strict";
 
+const InvoiceHeader = ({ createdAt, dueAt }) => {
+  return (
+    <tr className="top">
+      <td colSpan="2">
+        <table>
+          <tbody>
+            <tr>
+              <td className="title">
+                <img
+                  src="/static/images/cai_logo.svg"
+                  style={{ width: "100%", maxWidth: "300px" }}
+                  alt="Logo"
+                />
+              </td>
+              <td>
+                Invoice #: 39291 <br />
+                Created: {new Date(createdAt).toLocaleDateString()} <br />
+                Due: {new Date(dueAt).toLocaleDateString()}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  );
+};
+
+const Address = ({ company, fullName, email }) => {
+  return (
+    <tr className="information">
+      <td colSpan="2">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                CollectAI GmbH.
+                <br />
+                20457 Hamburg
+                <br />
+                Hamburg, Germany
+              </td>
+              <td>
+                {company}
+                <br />
+                {fullName} <br />
+                {email}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  );
+};
+
+const Items = ({ lineItems, handleRemoveItem }) => {
+  return (
+    <React.Fragment>
+      <tr className="heading">
+        <td>Item</td>
+        <td>Price</td>
+      </tr>
+
+      {lineItems.map((item, key) => (
+        <tr className="item last" key={key}>
+          <td>
+            <button
+              className="icon-button"
+              onClick={() => handleRemoveItem(item.id)}
+            >
+              <span className="material-icons">remove_circle_outline</span>
+            </button>
+            {item.description}
+          </td>
+          <td>${item.price.toFixed(2)}</td>
+        </tr>
+      ))}
+    </React.Fragment>
+  );
+};
+
+const AddItem = ({ setDescription, setPrice, setAddItem }) => {
+  return (
+    <tr className="item last">
+      <td>
+        <button className="icon-button" onClick={() => setAddItem(false)}>
+          <span className="material-icons">remove_circle_outline</span>
+        </button>
+        <input
+          type="text"
+          placeholder="Description"
+          onBlur={(e) => setDescription(e.target.value.trim())}
+          onKeyDown={(e) => e.key == "Enter" && setDescription(e.target.value)}
+        />
+      </td>
+      <td>
+        <input
+          type="number"
+          placeholder="Price"
+          onBlur={(e) => setPrice(e.target.value)}
+          onKeyDown={(e) => e.key == "Enter" && setPrice(e.target.value)}
+        />
+      </td>
+    </tr>
+  );
+};
+
 const Invoice = () => {
   const [data, setData] = React.useState(null);
   const [description, setDescription] = React.useState("");
@@ -71,118 +178,36 @@ const Invoice = () => {
       });
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   if (error) {
     return <div> {error.response.data} </div>;
+  }
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
     <React.Fragment>
       <table cellPadding="0" cellSpacing="0">
         <tbody>
-          <tr className="top">
-            <td colSpan="2">
-              <table>
-                <tbody>
-                  <tr>
-                    <td className="title">
-                      <img
-                        src="/static/images/cai_logo.svg"
-                        style={{ width: "100%", maxWidth: "300px" }}
-                        alt="Logo"
-                      />
-                    </td>
-                    <td>
-                      Invoice #: 39291 <br />
-                      Created: {new Date(
-                        data.createdAt
-                      ).toLocaleDateString()}{" "}
-                      <br />
-                      Due: {new Date(data.dueAt).toLocaleDateString()}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <tr className="information">
-            <td colSpan="2">
-              <table>
-                <tbody>
-                  <tr>
-                    <td>
-                      CollectAI GmbH.
-                      <br />
-                      20457 Hamburg
-                      <br />
-                      Hamburg, Germany
-                    </td>
-                    <td>
-                      {data.company}
-                      <br />
-                      {data.fullName} <br />
-                      {data.email}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <tr className="heading">
-            <td>Item</td>
-            <td>Price</td>
-          </tr>
-
-          {data.lineItems.map((item, key) => (
-            <tr className="item last" key={key}>
-              <td>
-                <button
-                  className="icon-button"
-                  onClick={() => handleRemoveItem(item.id)}
-                >
-                  <span className="material-icons">remove_circle_outline</span>
-                </button>
-                {item.description}
-              </td>
-              <td>${item.price.toFixed(2)}</td>
-            </tr>
-          ))}
-
-          {addItem == true && (
-            <tr className="item last">
-              <td>
-                <button
-                  className="icon-button"
-                  onClick={() => setAddItem(false)}
-                >
-                  <span className="material-icons">remove_circle_outline</span>
-                </button>
-                <input
-                  type="text"
-                  placeholder="Description"
-                  onBlur={(e) => setDescription(e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key == "Enter" && setDescription(e.target.value)
-                  }
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  placeholder="Price"
-                  onBlur={(e) => setPrice(e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key == "Enter" && setPrice(e.target.value)
-                  }
-                />
-              </td>
-            </tr>
+          <InvoiceHeader createdAt={data.createdAt} dueAt={data.dueAt} />
+          <Address
+            company={data.company}
+            fullName={data.fullName}
+            email={data.email}
+          />
+          <Items
+            lineItems={data.lineItems}
+            handleRemoveItem={handleRemoveItem}
+          />
+          {addItem && (
+            <AddItem
+              setDescription={setDescription}
+              setPrice={setPrice}
+              setAddItem={setAddItem}
+            />
           )}
 
+          {/* Add Item Row */}
           <tr className="item last">
             <td>
               <button className="icon-button" onClick={() => setAddItem(true)}>
@@ -193,6 +218,7 @@ const Invoice = () => {
             <td></td>
           </tr>
 
+          {/* Total */}
           <tr className="total">
             <td></td>
             <td>
