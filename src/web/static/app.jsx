@@ -68,7 +68,7 @@ const Items = ({ lineItems, handleRemoveItem }) => {
           <td>
             <button
               className="icon-button"
-              onClick={() => handleRemoveItem(item.id)}
+              onClick={() => handleRemoveItem(item)}
             >
               <span className="material-icons">remove_circle_outline</span>
             </button>
@@ -81,7 +81,7 @@ const Items = ({ lineItems, handleRemoveItem }) => {
   );
 };
 
-const AddItem = ({ setDescription, setPrice, setAddItem }) => {
+const AddItem = ({ setDescription, setPrice, setAddItem, error }) => {
   return (
     <tr className="item last">
       <td>
@@ -115,51 +115,73 @@ const Invoice = () => {
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
-  const postUpdatedInvoice = async (updatedData) => {
+  const postAddItem = async (updatedData) => {
     try {
       const response = await axios.post(
-        "http://localhost:3003/api/invoice/update",
-        { data: updatedData },
+        "http://localhost:3003/api/invoice/add",
+        updatedData,
         { withCredentials: true }
       );
-      console.log("Invoice updated:", response.data);
+      return response.status === 200;
     } catch (error) {
       console.error("Error updating invoice:", error);
       setError(error);
     }
   };
 
-  const handleRemoveItem = (id) => {
-    const updatedData = {
-      ...data,
-      lineItems: data.lineItems.filter((item) => item.id !== id),
-    };
-    setData(updatedData);
-    postUpdatedInvoice(updatedData);
+  const postRemoveItem = async (removedItem) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3003/api/invoice/remove",
+        removedItem,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.status === 200;
+    } catch (error) {
+      console.error("Error removing item:", error);
+      setError(error);
+    }
   };
 
-  React.useEffect(() => {
-    if (price && description) {
-      handleAddItem();
+  const handleRemoveItem = async (removedItem) => {
+    console.log(removedItem);
+    const check = await postRemoveItem(removedItem);
+    if (check) {
+      console.log("Item successfully removed");
+      const updatedData = {
+        ...data,
+        lineItems: data.lineItems.filter((item) => item.id !== removedItem.id),
+      };
+      setData(updatedData);
     }
-  }, [price, description]);
+  };
 
-  const handleAddItem = () => {
+  const handleAddItem = async () => {
     setAddItem(false);
     const newItem = {
       description: description,
       price: Number(price),
       id: uuid.v4(),
     };
-    const updatedData = {
-      ...data,
-      lineItems: [...data.lineItems, newItem],
-    };
-    setDescription("");
-    setPrice("");
-    setData(updatedData);
-    postUpdatedInvoice(updatedData);
+    const check = await postAddItem(newItem);
+    if (check) {
+      console.log("Invoice updated:");
+      const updatedData = {
+        ...data,
+        lineItems: [...data.lineItems, newItem],
+      };
+      setDescription("");
+      setPrice("");
+      setData(updatedData);
+    }
   };
+  React.useEffect(() => {
+    if (price && description) {
+      handleAddItem();
+    }
+  }, [price, description]);
 
   React.useEffect(() => {
     axios
@@ -179,7 +201,11 @@ const Invoice = () => {
   }, []);
 
   if (error) {
-    return <div> {error.response.data} </div>;
+    if (error.response && error.response.data) {
+      return <div>{error.response.data}</div>;
+    }
+    return <div>{error.message}</div>;
+    return <Invoice />;
   }
   if (loading) {
     return <div>Loading...</div>;
@@ -204,6 +230,7 @@ const Invoice = () => {
               setDescription={setDescription}
               setPrice={setPrice}
               setAddItem={setAddItem}
+              error={error}
             />
           )}
 

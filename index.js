@@ -38,23 +38,46 @@ app.get("/api/invoice", async (req, res) => {
   }
 });
 
-// API route to update the invoice (add/remove line items)
-app.post("/api/invoice/update", (req, res) => {
+// API route to add item to the invoice
+app.post("/api/invoice/add", (req, res) => {
   try {
     if (!invoiceData) {
       return res.status(400).send("No invoice data found to update");
     }
-    const { lineItems } = req.body.data;
-    for (const item of lineItems) {
-      if (!item.description || !item.price || typeof item.price !== "number") {
-        res.status(400).send("Invalid lineItems format");
-      }
+    const newItem = req.body;
+    if (
+      !newItem.description ||
+      !newItem.price ||
+      typeof newItem.price !== "number"
+    ) {
+      res.status(400).send("Invalid lineItems format");
     }
-    invoiceData.lineItems = lineItems;
+    if (invoiceData.lineItems.some((item) => item.id == newItem.id)) {
+      return res.status(400).json({ error: "Duplicate Item ID found" });
+    }
+    invoiceData.lineItems.push(newItem);
     res.status(200).json(invoiceData);
+    console.log("invoice updated");
   } catch (error) {
     console.error("Error updating invoice:", error);
     res.status(500).send("Error updating invoice");
+  }
+});
+
+// API route to remove item from the invoice
+app.post("/api/invoice/remove", (req, res) => {
+  try {
+    if (!invoiceData) {
+      return res.status(400).send("No invoice data found to update");
+    }
+    const removedItem = req.body;
+    console.log(removedItem);
+    invoiceData.lineItems.filter((item) => item.id == removedItem.id);
+    res.status(200).json(invoiceData);
+    console.log("invoice updated");
+  } catch (error) {
+    console.error("Error updating invoice:", error);
+    res.status(500).send("Error removing item");
   }
 });
 
