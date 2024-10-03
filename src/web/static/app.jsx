@@ -81,7 +81,7 @@ const Items = ({ lineItems, handleRemoveItem }) => {
   );
 };
 
-const AddItem = ({ setDescription, setPrice, setAddItem, error }) => {
+const AddItem = ({ setDescription, setPrice, setAddItem }) => {
   return (
     <tr className="item last">
       <td>
