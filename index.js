@@ -72,7 +72,7 @@ app.post("/api/invoice/remove", (req, res) => {
     }
     const removedItem = req.body;
     console.log(removedItem);
-    invoiceData.lineItems.filter((item) => item.id == removedItem.id);
+    invoiceData = invoiceData.lineItems.filter((item) => item.id == removedItem.id);
     res.status(200).json(invoiceData);
     console.log("invoice updated");
   } catch (error) {
